@@ -1,37 +1,31 @@
-import React from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 
-// 시작 로딩 화면
-const SplashScreen = ({ onLoaded }) => {
-  setTimeout(() => {
-    onLoaded();
-  }, 3000); // 3초 후 로딩 완료
+export default function SplashScreen({ navigation }) {
+  useEffect(() => {
+    setTimeout(() => {
+      navigation.replace('Login'); // 2초 후 로그인 화면으로 이동
+    }, 2000);
+  }, [navigation]);
 
   return (
-    <View style={styles.splashScreen}>
-      <Image source={require('../assets/bell.png')} style={styles.logoImage} />
-      <Text style={styles.logoText}>한성 NOTI</Text>
+    <View style={styles.container}>
+      <ActivityIndicator size="large" color="#0000ff" />
+      <Text style={styles.text}>앱 로딩 중...</Text>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  splashScreen: {
+  container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f7f9fc', // 배경색 설정
+    backgroundColor: '#f7f9fc',
   },
-  logoImage: {
-    width: 100, // 이미지 너비
-    height: 100, // 이미지 높이
-    marginBottom: 20, // 텍스트와의 간격
-  },
-  logoText: {
-    fontSize: 40, // 텍스트 크기
-    fontWeight: 'bold',
-    color: '#1d4ed8', // 텍스트 색상
+  text: {
+    marginTop: 20,
+    fontSize: 16,
+    color: '#333',
   },
 });
-
-export default SplashScreen;

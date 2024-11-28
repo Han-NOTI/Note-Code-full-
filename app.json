@@ -11,9 +11,27 @@
     },
     "android": {
       "adaptiveIcon": {
+        "foregroundImage": "./assets/bell.png",
         "backgroundColor": "#ffffff"
+      },
+      "package": "com.dda2730.finalproject",
+      "icon": "./assets/bell.png", 
+      "notification": {
+        "icon": "./assets/bell.png",
+        "color": "#FF5733" // 알림 아이콘의 배경색 (선택 사항)
       }
     },
-    "web": {}
+    "splash": {
+      "image": "./assets/bell.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "web": {},
+    "extra": {
+      "eas": {
+        "projectId": "6c498f61-f4d8-4c16-9c71-98ab4fb98301"
+      }
+    },
+    "owner": "dda2730"
   }
 }

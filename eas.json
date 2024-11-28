@@ -1,0 +1,12 @@
+{
+  "cli": {
+    "version": ">= 12.6.1"
+  },
+  "build": {
+    "production": {
+      "android": {
+        "buildType": "apk" // APK 빌드 설정
+      }
+    }
+  }
+}

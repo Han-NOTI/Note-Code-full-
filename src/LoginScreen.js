@@ -1,78 +1,59 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   TextInput,
   Text,
-  Image,
   StyleSheet,
   TouchableOpacity,
+  Image,
+  Alert,
 } from 'react-native';
-import Checkbox from 'expo-checkbox';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
-const LoginScreen = ({ onLoginSuccess }) => {
+export default function LoginScreen({ navigation }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  // AsyncStorage에서 로그인 데이터 로드
-  useEffect(() => {
-    const loadLoginData = async () => {
-      const savedUsername = await AsyncStorage.getItem('username');
-      const savedPassword = await AsyncStorage.getItem('password');
-      const savedRememberMe = await AsyncStorage.getItem('rememberMe');
-      if (savedRememberMe === 'true') {
-        setUsername(savedUsername || '');
-        setPassword(savedPassword || '');
-        setRememberMe(true);
-      }
-    };
-    loadLoginData();
-  }, []);
-
-  // 로그인 처리
   const handleLogin = async () => {
-    if (username === '2412345' && password === 'password') {
-      if (rememberMe) {
-        // 로그인 데이터 저장
-        await AsyncStorage.setItem('username', username);
-        await AsyncStorage.setItem('password', password);
-        await AsyncStorage.setItem('rememberMe', 'true');
-      } else {
-        // 데이터 초기화
-        await AsyncStorage.removeItem('username');
-        await AsyncStorage.removeItem('password');
-        await AsyncStorage.setItem('rememberMe', 'false');
-      }
-      onLoginSuccess();
-    } else {
-      setError(
-        '학번 또는 패스워드가 잘못되었습니다. 학번과 패스워드를 정확히 입력해주세요.'
-      );
-      setUsername('');
-      setPassword('');
+    try {
+      const response = await axios.post('http://192.168.35.129:5000/api/login', {
+        username,
+        password,
+      });
+      const courses = response.data;
+      navigation.navigate('Main', {
+        screen: 'Home',
+        params: { courses },
+      });
+    } catch (err) {
+      console.error('로그인 실패:', err.response?.data || err.message);
+      setError('로그인 실패. 사용자 정보를 확인해주세요.');
     }
   };
 
   return (
-    <View style={styles.loginContainer}>
+    <View style={styles.container}>
+      {/* 로고 */}
       <Image source={require('../assets/logo.png')} style={styles.logo} />
+
+      {/* 사용자 입력 */}
       <TextInput
-        placeholder="학번"
+        placeholder="아이디"
         value={username}
         onChangeText={setUsername}
         style={styles.input}
       />
       <View style={styles.passwordContainer}>
         <TextInput
-          placeholder="패스워드"
+          placeholder="비밀번호"
           value={password}
           onChangeText={setPassword}
           secureTextEntry={!showPassword}
           style={styles.passwordInput}
         />
+        {/* 비밀번호 표시/숨기기 버튼 */}
         <TouchableOpacity
           onPress={() => setShowPassword(!showPassword)}
           style={styles.passwordToggle}
@@ -80,50 +61,45 @@ const LoginScreen = ({ onLoginSuccess }) => {
           <Image
             source={
               showPassword
-                ? require('../assets/show-pass.png')
-                : require('../assets/blind-pass.png')
+                ? require('../assets/show-pass.png') // 비밀번호 표시 아이콘
+                : require('../assets/blind-pass.png') // 비밀번호 숨기기 아이콘
             }
             style={styles.toggleIcon}
           />
         </TouchableOpacity>
       </View>
-      <View style={styles.checkboxContainer}>
-        <Checkbox
-          value={rememberMe}
-          onValueChange={setRememberMe}
-          color={rememberMe ? '#1d4ed8' : undefined}
-        />
-        <Text style={styles.checkboxText}>아이디/비밀번호 저장</Text>
-      </View>
+
+      {/* 에러 메시지 */}
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
-      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+
+      {/* 로그인 버튼 */}
+      <TouchableOpacity onPress={handleLogin} style={styles.loginButton}>
         <Text style={styles.loginButtonText}>로그인</Text>
       </TouchableOpacity>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  loginContainer: {
+  container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 16,
     backgroundColor: '#f7f9fc',
+    padding: 20,
   },
   logo: {
-    width: '80%',
-    height: 50,
-    marginBottom: 40,
+    width: 150, // 로고 이미지 너비
+    height: 50, // 로고 이미지 높이
+    marginBottom: 40, // 아래 요소와 간격
   },
   input: {
     width: '80%',
-    height: 40,
+    padding: 10,
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 5,
-    paddingHorizontal: 10,
-    marginBottom: 15,
+    marginVertical: 10,
     backgroundColor: '#fff',
   },
   passwordContainer: {
@@ -133,13 +109,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 5,
-    marginBottom: 15,
+    marginVertical: 10,
     backgroundColor: '#fff',
   },
   passwordInput: {
     flex: 1,
-    height: 40,
-    paddingHorizontal: 10,
+    padding: 10,
   },
   passwordToggle: {
     padding: 10,
@@ -148,38 +123,19 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
   },
-  checkboxContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  checkboxText: {
-    fontSize: 14,
-    color: '#333',
-    marginLeft: 8,
-  },
   errorText: {
     color: 'red',
     marginBottom: 20,
   },
   loginButton: {
-    width: '80%',
-    height: 45,
-    backgroundColor: '#1d4ed8',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: '#007BFF',
+    padding: 10,
     borderRadius: 5,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 3,
-    elevation: 5,
+    width: '80%',
+    alignItems: 'center',
   },
   loginButtonText: {
     color: '#fff',
-    fontSize: 16,
     fontWeight: 'bold',
   },
 });
-
-export default LoginScreen;

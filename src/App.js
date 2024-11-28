@@ -1,89 +1,57 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Image } from 'react-native';
 import SplashScreen from './SplashScreen';
 import LoginScreen from './LoginScreen';
-import ManualScreen from './ManualScreen';
 import HomeScreen from './HomeScreen';
 import NotificationScreen from './NotificationScreen';
 import ProfileScreen from './ProfileScreen';
-import { Alert } from 'react-native';
-
-// 순환 색상 배열
-const colorPalette = [
-  '#d1e7ff',
-  '#ffd1d1',
-  '#d1ffd1',
-  '#ffe6b3',
-  '#fff3d1',
-  '#f3d1ff',
-  '#f0ffff',
-];
-
-// 과목 데이터를 순환 색상 배열을 사용하여 설정
-const initialSubjects = [
-  { title: '고급모바일프로그래밍', details: '과제: 4시간 남음' },
-  { title: '웹프레임워크1', details: '영상: 5시간 남음' },
-  { title: 'SW프로그래밍', details: '과제: 1일 2시간 남음' },
-  { title: '시스템프로그래밍', details: '과제: 5일 7시간 남음' },
-  { title: '선형대수', details: '과제: 6일 남음' },
-  { title: '설계패턴', details: '과제: 6일 13시간 남음' },
-].map((subject, index) => ({
-  ...subject,
-  color: colorPalette[index % colorPalette.length], // 색상을 순환하여 할당
-}));
 
 const Stack = createStackNavigator();
+const Tab = createBottomTabNavigator();
 
-export default function App() {
-  const [loaded, setLoaded] = useState(false);
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [showManual, setShowManual] = useState(true);
-
-  if (!loaded) {
-    return <SplashScreen onLoaded={() => setLoaded(true)} />;
-  }
-
-  if (!loggedIn) {
-    return (
-      <LoginScreen
-        onLoginSuccess={() => {
-          setLoggedIn(true);
-        }}
-      />
-    );
-  }
-
-  if (showManual) {
-    return <ManualScreen onComplete={() => setShowManual(false)} />;
-  }
-
-  const handleLogout = () => {
-    setLoggedIn(false);
-  };
+function TabNavigator({ route }) {
+  const { courses } = route.params || {}; // 강좌 데이터를 전달받음
 
   return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused }) => {
+          let icon;
+          if (route.name === 'Home') {
+            icon = focused
+              ? require('../assets/home-1.png')
+              : require('../assets/home-2.png');
+          } else if (route.name === 'Notifications') {
+            icon = focused
+              ? require('../assets/alarm-1.png')
+              : require('../assets/alarm-2.png');
+          } else if (route.name === 'Profile') {
+            icon = focused
+              ? require('../assets/profile-1.png')
+              : require('../assets/profile-2.png');
+          }
+          return <Image source={icon} style={{ width: 24, height: 24 }} />;
+        },
+      })}
+      initialRouteName="Home"
+    >
+      <Tab.Screen name="Home" component={HomeScreen} initialParams={{ courses }} options={{ title: '강좌 목록' }} />
+      <Tab.Screen name="Notifications" component={NotificationScreen} options={{ title: '알림' }} />
+      <Tab.Screen name="Profile" component={ProfileScreen} options={{ title: '프로필' }} />
+    </Tab.Navigator>
+  );
+}
+
+export default function App() {
+  return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="HomeScreen">
-        <Stack.Screen name="HomeScreen" options={{ headerShown: false }}>
-          {(props) => (
-            <HomeScreen
-              {...props}
-              subjects={initialSubjects}
-              onSubjectClick={(subject) =>
-                Alert.alert(`선택된 과목: ${subject.title}`, subject.details)
-              }
-            />
-          )}
-        </Stack.Screen>
-        <Stack.Screen
-          name="NotificationScreen"
-          component={NotificationScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen name="ProfileScreen" options={{ headerShown: false }}>
-          {(props) => <ProfileScreen {...props} onLogout={handleLogout} />}
-        </Stack.Screen>
+      <Stack.Navigator initialRouteName="Splash">
+        <Stack.Screen name="Splash" component={SplashScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="Main" component={TabNavigator} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -1,104 +1,32 @@
-import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  SafeAreaView,
-  ScrollView,
-} from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import React from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity, SafeAreaView, ScrollView } from 'react-native';
 
-const ProfileScreen = ({ onLogout }) => {
-  const navigation = useNavigation();
-  const [selectedTab, setSelectedTab] = useState('profile');
-
-  const handleTabPress = (tab) => {
-    setSelectedTab(tab);
-    if (tab === 'home') {
-      navigation.navigate('HomeScreen');
-    } else if (tab === 'alarm') {
-      navigation.navigate('NotificationScreen');
-    }
-  };
-
+const ProfileScreen = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <Text style={styles.title}>PROFILE</Text>
         <View style={styles.infoContainer}>
           <View style={styles.infoRow}>
-            <Image
-              source={require('../assets/user-icon.png')}
-              style={styles.icon}
-            />
+            <Image source={require('../assets/user-icon.png')} style={styles.icon} />
             <Text style={styles.infoLabel}>이름</Text>
             <Text style={styles.infoText}>홍길동</Text>
           </View>
           <View style={styles.infoRow}>
-            <Image
-              source={require('../assets/id-icon.png')}
-              style={styles.icon}
-            />
+            <Image source={require('../assets/id-icon.png')} style={styles.icon} />
             <Text style={styles.infoLabel}>학번</Text>
             <Text style={styles.infoText}>2412345</Text>
           </View>
           <View style={styles.infoRow}>
-            <Image
-              source={require('../assets/school-icon.png')}
-              style={styles.icon}
-            />
+            <Image source={require('../assets/school-icon.png')} style={styles.icon} />
             <Text style={styles.infoLabel}>소속</Text>
             <Text style={styles.infoText}>모바일소프트웨어트랙</Text>
           </View>
         </View>
-        <TouchableOpacity style={styles.logoutButton} onPress={onLogout}>
+        <TouchableOpacity style={styles.logoutButton} onPress={() => navigation.navigate('Login')}>
           <Text style={styles.logoutText}>로그아웃</Text>
         </TouchableOpacity>
       </ScrollView>
-      {/* 하단 네비게이션 바 */}
-      <View style={styles.navigationBar}>
-        <TouchableOpacity
-          onPress={() => handleTabPress('home')}
-          style={styles.navButton}
-        >
-          <Image
-            source={
-              selectedTab === 'home'
-                ? require('../assets/home-1.png')
-                : require('../assets/home-2.png')
-            }
-            style={styles.navIcon}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => handleTabPress('alarm')}
-          style={styles.navButton}
-        >
-          <Image
-            source={
-              selectedTab === 'alarm'
-                ? require('../assets/alarm-1.png')
-                : require('../assets/alarm-2.png')
-            }
-            style={styles.navIcon}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => handleTabPress('profile')}
-          style={styles.navButton}
-        >
-          <Image
-            source={
-              selectedTab === 'profile'
-                ? require('../assets/profile-1.png')
-                : require('../assets/profile-2.png')
-            }
-            style={styles.navIcon}
-          />
-        </TouchableOpacity>
-      </View>
     </SafeAreaView>
   );
 };
@@ -161,26 +89,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#000',
-  },
-  navigationBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    height: 60,
-    borderTopWidth: 3,
-    borderTopColor: '#ddd',
-    backgroundColor: '#fff',
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 35,
-  },
-  navButton: {
-    alignItems: 'center',
-  },
-  navIcon: {
-    width: 70,
-    height: 30,
   },
 });
 

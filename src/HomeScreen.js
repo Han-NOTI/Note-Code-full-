@@ -1,190 +1,68 @@
-import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  StyleSheet,
-  SafeAreaView,
-  Image,
-  Alert,
-} from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import React from 'react';
+import { View, Text, FlatList, StyleSheet } from 'react-native';
 
-const HomeScreen = ({ subjects = [] }) => {
-  const [subjectList, setSubjectList] = useState(subjects);
-  const [selectedTab, setSelectedTab] = useState('home');
-  const navigation = useNavigation();
+export default function HomeScreen({ route }) {
+  const { courses } = route.params || {}; // 기본값을 빈 객체로 설정
 
-  const handleSubjectClick = (subject) => {
-    Alert.alert('과목 선택', `${subject.title}의 수행할 업무가 출력됩니다.`);
-    setSubjectList((prevSubjects) =>
-      prevSubjects.filter((item) => item.title !== subject.title)
+  console.log('강좌 데이터:', courses);  // 추가된 디버깅 코드
+
+  if (!courses || courses.length === 0) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.errorText}>수강 가능한 강좌가 없습니다.</Text>
+      </View>
     );
-  };
-
-  const handleTabPress = (tab) => {
-    setSelectedTab(tab);
-    if (tab === 'alarm') {
-      navigation.navigate('NotificationScreen');
-    } else if (tab === 'profile') {
-      navigation.navigate('ProfileScreen');
-    }
-  };
-
-  const handleRefresh = () => {
-    setSubjectList(subjects);
-  };
+  }
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <Text style={styles.title}>Schedule</Text>
-          <TouchableOpacity
-            onPress={handleRefresh}
-            style={styles.refreshButton}
-          >
-            <Image
-              source={require('../assets/refresh.png')}
-              style={styles.refreshIcon}
-            />
-          </TouchableOpacity>
-        </View>
-        <FlatList
-          data={subjectList}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              onPress={() => handleSubjectClick(item)}
-              style={[styles.subjectCard, { backgroundColor: item.color }]}
-            >
-              <Text style={styles.subjectTitle}>{item.title}</Text>
-              <Text style={styles.subjectDetails}>{item.details}</Text>
-            </TouchableOpacity>
-          )}
-          keyExtractor={(item, index) => index.toString()}
-          contentContainerStyle={styles.subjectList}
-        />
-        {/* 하단 네비게이션 바 */}
-        <View style={styles.navigationBar}>
-          <TouchableOpacity
-            onPress={() => handleTabPress('home')}
-            style={styles.navButton}
-          >
-            <Image
-              source={
-                selectedTab === 'home'
-                  ? require('../assets/home-1.png')
-                  : require('../assets/home-2.png')
-              }
-              style={styles.navIcon}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => handleTabPress('alarm')}
-            style={styles.navButton}
-          >
-            <Image
-              source={
-                selectedTab === 'alarm'
-                  ? require('../assets/alarm-1.png')
-                  : require('../assets/alarm-2.png')
-              }
-              style={styles.navIcon}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => handleTabPress('profile')}
-            style={styles.navButton}
-          >
-            <Image
-              source={
-                selectedTab === 'profile'
-                  ? require('../assets/profile-1.png')
-                  : require('../assets/profile-2.png')
-              }
-              style={styles.navIcon}
-            />
-          </TouchableOpacity>
-        </View>
-      </View>
-    </SafeAreaView>
+    <View style={styles.container}>
+      <Text style={styles.title}>강좌 목록</Text>
+      <FlatList
+        data={courses.filter(course => course.videos && course.videos.length > 0 || course.assignments && course.assignments.length > 0)} // 필터링 조건 수정
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item }) => (
+          <View style={styles.card}>
+            <Text style={styles.courseTitle}>{item.course_title}</Text>
+            {item.videos.length > 0 && (
+              <View>
+                <Text style={styles.sectionTitle}>수강 가능한 강의:</Text>
+                <FlatList
+                  data={item.videos}
+                  keyExtractor={(video, idx) => idx.toString()}
+                  renderItem={({ item: video }) => (
+                    <Text style={styles.videoText}>- {video.title}</Text>
+                  )}
+                />
+              </View>
+            )}
+            {item.assignments.length > 0 && (
+              <View>
+                <Text style={styles.sectionTitle}>제출해야 할 과제:</Text>
+                <FlatList
+                  data={item.assignments}
+                  keyExtractor={(assignment, idx) => idx.toString()}
+                  renderItem={({ item: assignment }) => (
+                    <Text style={styles.assignmentText}>
+                      - {assignment.title} (제출 여부: {assignment.submission_status})
+                    </Text>
+                  )}
+                />
+              </View>
+            )}
+          </View>
+        )}
+      />
+    </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#f7f9fc',
-  },
-  container: {
-    flex: 1,
-    padding: 16,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 20,
-    position: 'relative', // 상대 위치를 사용하여 자식 요소를 배치
-  },
-  title: {
-    fontSize: 30,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    flex: 1, // 제목이 중앙에 위치하도록 설정
-  },
-  refreshButton: {
-    position: 'absolute', // 절대 위치로 설정
-    right: 0, // 오른쪽에 배치
-  },
-  refreshIcon: {
-    width: 24,
-    height: 24,
-  },
-  subjectList: {
-    paddingBottom: 80,
-  },
-  subjectCard: {
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 2,
-  },
-  subjectTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  subjectDetails: {
-    fontSize: 14,
-    color: '#666',
-    marginTop: 4,
-  },
-  navigationBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    height: 60,
-    borderTopWidth: 3,
-    borderTopColor: '#ddd',
-    backgroundColor: '#fff',
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-  },
-  navButton: {
-    alignItems: 'center',
-  },
-  navIcon: {
-    width: 70,
-    height: 30,
-  },
+  container: { flex: 1, padding: 20, backgroundColor: '#f7f9fc' },
+  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 20 },
+  sectionTitle: { fontSize: 18, fontWeight: 'bold', marginTop: 15 },
+  card: { padding: 15, backgroundColor: '#fff', borderRadius: 10, marginBottom: 10 },
+  courseTitle: { fontSize: 18, fontWeight: 'bold', marginBottom: 5 },
+  videoText: { fontSize: 14, color: '#333' },
+  assignmentText: { fontSize: 14, color: '#555' },
+  errorText: { color: 'red', textAlign: 'center', marginTop: 20 },
 });
-
-export default HomeScreen;
