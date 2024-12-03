@@ -1,8 +1,5 @@
-<<<<<<< HEAD
 import React, { useEffect, useState } from 'react';
-=======
 import React, { useState } from 'react';
->>>>>>> 8dd96a88735a76659bdfb1449a152c70a807e36c
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -117,7 +114,6 @@ function TabNavigator({ route }) {
 }
 
 export default function App() {
-<<<<<<< HEAD
   useEffect(() => {
     const registerPushNotifications = async () => {
       // 권한 요청 및 Expo Push Token 가져오기
@@ -146,11 +142,10 @@ export default function App() {
       Notifications.removeAllNotificationListeners();
     };
   }, []);
-=======
+
   const [loaded, setLoaded] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
   const [showManual, setShowManual] = useState(true);
->>>>>>> 8dd96a88735a76659bdfb1449a152c70a807e36c
 
   return (
     <NavigationContainer>

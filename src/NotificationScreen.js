@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Modal } from 'react-native';
 import { dummyData } from './dummyData';
@@ -16,7 +15,6 @@ const calculateRemainingTime = (deadline) => {
 
   return diffDays > 0 ? `${diffDays}일 ${diffHours}시간 남음` : `${diffHours}시간 남음`;
 };
-=======
 import React, { useState } from 'react';
 import {
   View,
@@ -26,7 +24,6 @@ import {
   TouchableOpacity,
   Image,
 } from 'react-native';
->>>>>>> 8dd96a88735a76659bdfb1449a152c70a807e36c
 
 const NotificationScreen = () => {
   const [notifications, setNotifications] = useState([]);
@@ -56,7 +53,6 @@ const NotificationScreen = () => {
 
   return (
     <View style={styles.container}>
-<<<<<<< HEAD
       <Text style={styles.title}>알림 센터</Text>
       <FlatList
         data={notifications}
@@ -72,7 +68,6 @@ const NotificationScreen = () => {
       </TouchableOpacity>
 
       {/* 정리 모달 */}
-=======
       <View style={styles.header}>
         <Text style={styles.title}>알림 센터</Text>
         <TouchableOpacity onPress={() => setModalVisible(true)}>
@@ -92,7 +87,6 @@ const NotificationScreen = () => {
           고급모바일프로그래밍 과제 제출까지 6시간 남았습니다.
         </Text>
       </View>
->>>>>>> 8dd96a88735a76659bdfb1449a152c70a807e36c
       <Modal visible={modalVisible} transparent={true}>
         <View style={styles.modal}>
           <Text style={styles.modalTitle}>모든 알림을 삭제하시겠습니까?</Text>
@@ -111,10 +105,7 @@ const NotificationScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-<<<<<<< HEAD
-=======
     backgroundColor: '#f7f9fc',
->>>>>>> 8dd96a88735a76659bdfb1449a152c70a807e36c
     padding: 16,
     backgroundColor: '#f9f9f9',
   },
