@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import React, { useEffect, useState } from 'react';
+=======
+import React, { useState } from 'react';
+>>>>>>> 8dd96a88735a76659bdfb1449a152c70a807e36c
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -6,6 +10,7 @@ import { Image, Alert, Platform } from 'react-native';
 import * as Notifications from 'expo-notifications';
 import SplashScreen from './SplashScreen';
 import LoginScreen from './LoginScreen';
+import ManualScreen from './ManualScreen';
 import HomeScreen from './HomeScreen';
 import NotificationScreen from './NotificationScreen';
 import ProfileScreen from './ProfileScreen';
@@ -112,6 +117,7 @@ function TabNavigator({ route }) {
 }
 
 export default function App() {
+<<<<<<< HEAD
   useEffect(() => {
     const registerPushNotifications = async () => {
       // 권한 요청 및 Expo Push Token 가져오기
@@ -140,13 +146,35 @@ export default function App() {
       Notifications.removeAllNotificationListeners();
     };
   }, []);
+=======
+  const [loaded, setLoaded] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [showManual, setShowManual] = useState(true);
+>>>>>>> 8dd96a88735a76659bdfb1449a152c70a807e36c
 
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Splash">
-        <Stack.Screen name="Splash" component={SplashScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="Main" component={TabNavigator} options={{ headerShown: false }} />
+        <Stack.Screen name="Splash" options={{ headerShown: false }}>
+          {(props) => (
+            <SplashScreen {...props} onLoaded={() => setLoaded(true)} />
+          )}
+        </Stack.Screen>
+        <Stack.Screen
+          name="Login"
+          component={LoginScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Manual"
+          component={ManualScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Main"
+          component={TabNavigator}
+          options={{ headerShown: false }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -21,17 +21,20 @@ export default function LoginScreen({ navigation }) {
   const handleLogin = async () => {
     try {
       // API 요청
-      const response = await axios.post('http://192.168.35.102:5000/api/login', {
+      const response = await axios.post('http://172.30.1.87:5000/api/login', {
         username,
         password,
       });
       const courses = response.data;
-      navigation.navigate('Main', { screen: 'Home', params: { courses } });
+      // 로그인 성공 시 매뉴얼 화면으로 이동
+      navigation.navigate('Manual', { courses });
     } catch (err) {
       console.error('API Error:', err.message);
 
       // API 실패 시 더미 데이터 사용
-      navigation.navigate('Main', { screen: 'Home', params: { courses: dummyData } });
+      navigation.navigate('Manual', {
+        courses: dummyData,
+      });
     }
   };
 
