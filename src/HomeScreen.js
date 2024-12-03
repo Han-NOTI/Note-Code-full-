@@ -1,10 +1,26 @@
 import React from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { dummyData } from './dummyData';
+
+const calculateRemainingTime = (deadline) => {
+  const now = new Date();
+  const deadlineDate = new Date(`${new Date().getFullYear()}-${deadline}`);
+  const diffMs = deadlineDate - now;
+
+  if (diffMs <= 0) return '마감되었습니다.';
+
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  const diffHours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+
+  if (diffDays > 0) {
+    return `${diffDays}일 ${diffHours}시간 남음`;
+  } else {
+    return `${diffHours}시간 남음`;
+  }
+};
 
 export default function HomeScreen({ route }) {
-  const { courses } = route.params || {}; // 기본값을 빈 객체로 설정
-
-  console.log('강좌 데이터:', courses);  // 추가된 디버깅 코드
+  const { courses } = route.params || dummyData;
 
   if (!courses || courses.length === 0) {
     return (
@@ -16,39 +32,20 @@ export default function HomeScreen({ route }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>강좌 목록</Text>
+      {/* 상단 "Schedule" 제목 */}
+      <Text style={styles.header}>강좌 목록</Text>
+      {/* 강좌 목록 */}
       <FlatList
-        data={courses.filter(course => course.videos && course.videos.length > 0 || course.assignments && course.assignments.length > 0)} // 필터링 조건 수정
+        data={courses}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item }) => (
           <View style={styles.card}>
-            <Text style={styles.courseTitle}>{item.course_title}</Text>
-            {item.videos.length > 0 && (
-              <View>
-                <Text style={styles.sectionTitle}>수강 가능한 강의:</Text>
-                <FlatList
-                  data={item.videos}
-                  keyExtractor={(video, idx) => idx.toString()}
-                  renderItem={({ item: video }) => (
-                    <Text style={styles.videoText}>- {video.title}</Text>
-                  )}
-                />
-              </View>
-            )}
-            {item.assignments.length > 0 && (
-              <View>
-                <Text style={styles.sectionTitle}>제출해야 할 과제:</Text>
-                <FlatList
-                  data={item.assignments}
-                  keyExtractor={(assignment, idx) => idx.toString()}
-                  renderItem={({ item: assignment }) => (
-                    <Text style={styles.assignmentText}>
-                      - {assignment.title} (제출 여부: {assignment.submission_status})
-                    </Text>
-                  )}
-                />
-              </View>
-            )}
+            <Text style={styles.courseTitle}>{item[0]?.courseName}</Text>
+            {item.map((lecture, idx) => (
+              <Text key={idx} style={styles.videoText}>
+                - {lecture.lecture_title} 마감기한까지 {calculateRemainingTime(lecture.deadline)}
+              </Text>
+            ))}
           </View>
         )}
       />
@@ -57,12 +54,42 @@ export default function HomeScreen({ route }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: '#f7f9fc' },
-  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 20 },
-  sectionTitle: { fontSize: 18, fontWeight: 'bold', marginTop: 15 },
-  card: { padding: 15, backgroundColor: '#fff', borderRadius: 10, marginBottom: 10 },
-  courseTitle: { fontSize: 18, fontWeight: 'bold', marginBottom: 5 },
-  videoText: { fontSize: 14, color: '#333' },
-  assignmentText: { fontSize: 14, color: '#555' },
-  errorText: { color: 'red', textAlign: 'center', marginTop: 20 },
+  container: {
+    flex: 1,
+    backgroundColor: '#f7f9fc',
+    paddingHorizontal: 20,
+    paddingTop: 10,
+  },
+  header: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    color: '#333',
+    textAlign: 'left', // 왼쪽 정렬
+  },
+  card: {
+    padding: 15,
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    marginBottom: 10,
+  },
+  courseTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 5,
+    color: '#007BFF',
+    textAlign: 'left', // 왼쪽 정렬
+  },
+  videoText: {
+    fontSize: 14,
+    color: '#333',
+    textAlign: 'left', // 왼쪽 정렬
+  },
+  errorText: {
+    color: 'red',
+    textAlign: 'center',
+    marginTop: 20,
+    fontSize: 16,
+  },
 });
+

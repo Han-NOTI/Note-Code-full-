@@ -38,9 +38,46 @@ function TabNavigator({ route }) {
       })}
       initialRouteName="Home"
     >
-      <Tab.Screen name="Home" component={HomeScreen} initialParams={{ courses }} options={{ title: '강좌 목록' }} />
-      <Tab.Screen name="Notifications" component={NotificationScreen} options={{ title: '알림' }} />
-      <Tab.Screen name="Profile" component={ProfileScreen} options={{ title: '프로필' }} />
+      <Tab.Screen
+        name="Home"
+        component={HomeScreen}
+        initialParams={{ courses }}
+        options={{
+          title: 'Schedule', // 제목 설정
+          headerTitleAlign: 'center', // 제목 중앙 정렬
+          headerTitleStyle: {
+            fontSize: 30, // 제목 글씨 크기
+            fontWeight: 'bold', // 글씨 두께
+            color: '#333', // 글씨 색상
+          },
+        }}
+      />
+      <Tab.Screen
+        name="Notifications"
+        component={NotificationScreen}
+        options={{
+          title: '알림',
+          headerTitleAlign: 'center', // 제목 중앙 정렬
+          headerTitleStyle: {
+            fontSize: 30, // 제목 글씨 크기
+            fontWeight: 'bold', // 글씨 두께
+            color: '#333', // 글씨 색상
+          },
+        }}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{
+          title: '프로필',
+          headerTitleAlign: 'center', // 제목 중앙 정렬
+          headerTitleStyle: {
+            fontSize: 30, // 제목 글씨 크기
+            fontWeight: 'bold', // 글씨 두께
+            color: '#333', // 글씨 색상
+          },
+        }}
+      />
     </Tab.Navigator>
   );
 }
