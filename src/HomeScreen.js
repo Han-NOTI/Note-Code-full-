@@ -10,7 +10,9 @@ const calculateRemainingTime = (deadline) => {
   if (diffMs <= 0) return '마감되었습니다.';
 
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-  const diffHours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const diffHours = Math.floor(
+    (diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+  );
 
   if (diffDays > 0) {
     return `${diffDays}일 ${diffHours}시간 남음`;
@@ -20,7 +22,7 @@ const calculateRemainingTime = (deadline) => {
 };
 
 export default function HomeScreen({ route }) {
-  const { courses } = route.params || dummyData;
+  const { courses = dummyData } = route.params || {}; // 기본값으로 dummyData 사용
 
   if (!courses || courses.length === 0) {
     return (
@@ -32,8 +34,10 @@ export default function HomeScreen({ route }) {
 
   return (
     <View style={styles.container}>
-      {/* 상단 "Schedule" 제목 */}
-      <Text style={styles.header}>강좌 목록</Text>
+      {/* 상단 제목 */}
+      <View style={styles.header}>
+        <Text style={styles.title}>강좌 목록</Text>
+      </View>
       {/* 강좌 목록 */}
       <FlatList
         data={courses}
@@ -43,7 +47,9 @@ export default function HomeScreen({ route }) {
             <Text style={styles.courseTitle}>{item[0]?.courseName}</Text>
             {item.map((lecture, idx) => (
               <Text key={idx} style={styles.videoText}>
-                - {lecture.lecture_title} 마감기한까지 {calculateRemainingTime(lecture.deadline)}
+                - {lecture.lecture_title} ({lecture.lecture_length}) {'\n'}
+                마감 기한: {lecture.deadline} {'\n'}
+                남은 시간: {calculateRemainingTime(lecture.deadline)}
               </Text>
             ))}
           </View>
@@ -57,33 +63,39 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f7f9fc',
-    paddingHorizontal: 20,
-    paddingTop: 10,
+    padding: 16,
   },
   header: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 20,
-    color: '#333',
-    textAlign: 'left', // 왼쪽 정렬
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
   },
   card: {
-    padding: 15,
+    padding: 16,
     backgroundColor: '#fff',
-    borderRadius: 10,
+    borderRadius: 8,
     marginBottom: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   courseTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 5,
     color: '#007BFF',
-    textAlign: 'left', // 왼쪽 정렬
   },
   videoText: {
     fontSize: 14,
     color: '#333',
-    textAlign: 'left', // 왼쪽 정렬
+    marginBottom: 10,
   },
   errorText: {
     color: 'red',
@@ -92,4 +104,3 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
-

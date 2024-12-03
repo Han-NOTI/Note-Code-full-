@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Modal, TouchableOpacity, Image } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Modal,
+  TouchableOpacity,
+  Image,
+} from 'react-native';
 
 const NotificationScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -9,14 +16,21 @@ const NotificationScreen = () => {
       <View style={styles.header}>
         <Text style={styles.title}>알림 센터</Text>
         <TouchableOpacity onPress={() => setModalVisible(true)}>
-          <Image source={require('../assets/alarm-set.png')} style={styles.icon} />
+          <Image
+            source={require('../assets/alarm-set.png')}
+            style={styles.icon}
+          />
         </TouchableOpacity>
       </View>
       <View style={styles.notification}>
-        <Text style={styles.notificationText}>웹프레임워크1 영상 시청까지 5시간 남았습니다.</Text>
+        <Text style={styles.notificationText}>
+          웹프레임워크1 영상 시청까지 5시간 남았습니다.
+        </Text>
       </View>
       <View style={styles.notification}>
-        <Text style={styles.notificationText}>고급모바일프로그래밍 과제 제출까지 6시간 남았습니다.</Text>
+        <Text style={styles.notificationText}>
+          고급모바일프로그래밍 과제 제출까지 6시간 남았습니다.
+        </Text>
       </View>
       <Modal visible={modalVisible} transparent={true}>
         <View style={styles.modal}>
@@ -42,7 +56,7 @@ const NotificationScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: '#f7f9fc',
     padding: 16,
   },
   header: {

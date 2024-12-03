@@ -22,17 +22,20 @@ export default function LoginScreen({ navigation }) {
   const handleLogin = async () => {
     try {
       // API 요청
-      const response = await axios.post('http://192.168.35.102:5000/api/login', {
+      const response = await axios.post('http://172.30.1.87:5000/api/login', {
         username,
         password,
       });
       const courses = response.data;
-      navigation.navigate('Main', { screen: 'Home', params: { courses } });
+      // 로그인 성공 시 매뉴얼 화면으로 이동
+      navigation.navigate('Manual', { courses });
     } catch (err) {
       console.error('API Error:', err.message);
 
       // API 실패 시 더미 데이터 사용
-      navigation.navigate('Main', { screen: 'Home', params: { courses: dummyData } });
+      navigation.navigate('Manual', {
+        courses: dummyData,
+      });
     }
   };
 
@@ -83,39 +86,7 @@ export default function LoginScreen({ navigation }) {
   );
 }
 
-// HomeScreen 컴포넌트
-export function HomeScreen({ route }) {
-  const { courses } = route.params || dummyData; // 더미 데이터 기본값 사용
-
-  if (!courses || courses.length === 0) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.errorText}>수강 가능한 강좌가 없습니다.</Text>
-      </View>
-    );
-  }
-
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>강좌 목록</Text>
-      <FlatList
-        data={courses}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.card}>
-            <Text style={styles.courseTitle}>{item[0]?.courseName}</Text>
-            {item.map((lecture, idx) => (
-              <Text key={idx} style={styles.videoText}>
-                - {lecture.lecture_title} ({lecture.lecture_length}, 마감: {lecture.deadline})
-              </Text>
-            ))}
-          </View>
-        )}
-      />
-    </View>
-  );
-}
-
+// 스타일
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -125,12 +96,15 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   logo: {
-    width: 150, // 로고 이미지 너비
-    height: 50, // 로고 이미지 높이
+    width: '80%', // 화면 너비에 비례하여 로고 크기 설정
+    height: undefined, // 높이를 자동으로 조정
+    aspectRatio: 3, // 로고의 가로 세로 비율 고정 (예: 3:1)
     marginBottom: 40, // 아래 요소와 간격
+    resizeMode: 'contain', // 로고 이미지 전체가 보이도록 설정
   },
   input: {
     width: '80%',
+    height: 40,
     padding: 10,
     borderWidth: 1,
     borderColor: '#ccc',
@@ -142,6 +116,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     width: '80%',
+    height: 40,
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 5,
@@ -166,33 +141,16 @@ const styles = StyleSheet.create({
   loginButton: {
     backgroundColor: '#007BFF',
     padding: 10,
+    marginTop: 50,
     borderRadius: 5,
     width: '80%',
+    height: 50,
+    justifyContent: 'center',
     alignItems: 'center',
   },
   loginButtonText: {
     color: '#fff',
     fontWeight: 'bold',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-  card: {
-    padding: 15,
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    marginBottom: 10,
-  },
-  courseTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 5,
-  },
-  videoText: {
-    fontSize: 14,
-    color: '#333',
-    marginBottom: 5,
+    fontSize: 16,
   },
 });
