@@ -3,9 +3,11 @@ import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 
 export default function SplashScreen({ navigation }) {
   useEffect(() => {
-    setTimeout(() => {
-      navigation.replace('Login'); // 2초 후 로그인 화면으로 이동
-    }, 2000);
+    if (navigation) {
+      setTimeout(() => {
+        navigation.replace('Login'); // 2초 후 로그인 화면으로 이동
+      }, 2000);
+    }
   }, [navigation]);
 
   return (
