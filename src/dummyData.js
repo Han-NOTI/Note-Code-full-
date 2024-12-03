@@ -35,5 +35,11 @@ export const dummyData = [
         courseName: '웹프레임워크[A]',
       },
     ],
+    [
+      {
+        student_num: '2071122',
+        trak_name: '모바일소프트웨어트랙',
+        user_name: '이선빈',
+      },
+    ],
   ];
-  

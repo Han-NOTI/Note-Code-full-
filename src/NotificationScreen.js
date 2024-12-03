@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Modal } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+  Modal,
+  Image,
+} from 'react-native';
 import { dummyData } from './dummyData';
 import { schedulePushNotification } from './pushNotifications';
 
@@ -15,19 +23,11 @@ const calculateRemainingTime = (deadline) => {
 
   return diffDays > 0 ? `${diffDays}일 ${diffHours}시간 남음` : `${diffHours}시간 남음`;
 };
-import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Modal,
-  TouchableOpacity,
-  Image,
-} from 'react-native';
 
 const NotificationScreen = () => {
   const [notifications, setNotifications] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
+  const [selectedTime, setSelectedTime] = useState(null);
 
   useEffect(() => {
     const upcomingNotifications = [];
@@ -51,9 +51,18 @@ const NotificationScreen = () => {
     setModalVisible(false);
   };
 
+  const handleTimeSelect = (time) => {
+    setSelectedTime(time);
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>알림 센터</Text>
+      <View style={styles.header}>
+        <Text style={styles.title}>알림 센터</Text>
+        <TouchableOpacity onPress={() => setModalVisible(true)}>
+          <Image source={require('../assets/alarm-set.png')} style={styles.icon} />
+        </TouchableOpacity>
+      </View>
       <FlatList
         data={notifications}
         keyExtractor={(item, index) => index.toString()}
@@ -63,38 +72,31 @@ const NotificationScreen = () => {
           </View>
         )}
       />
-      <TouchableOpacity style={styles.clearButton} onPress={() => setModalVisible(true)}>
-        <Text style={styles.clearButtonText}>알림 정리</Text>
-      </TouchableOpacity>
-
-      {/* 정리 모달 */}
-      <View style={styles.header}>
-        <Text style={styles.title}>알림 센터</Text>
-        <TouchableOpacity onPress={() => setModalVisible(true)}>
-          <Image
-            source={require('../assets/alarm-set.png')}
-            style={styles.icon}
-          />
-        </TouchableOpacity>
-      </View>
-      <View style={styles.notification}>
-        <Text style={styles.notificationText}>
-          웹프레임워크1 영상 시청까지 5시간 남았습니다.
-        </Text>
-      </View>
-      <View style={styles.notification}>
-        <Text style={styles.notificationText}>
-          고급모바일프로그래밍 과제 제출까지 6시간 남았습니다.
-        </Text>
-      </View>
+      {/* 알림 시간 설정 모달 */}
       <Modal visible={modalVisible} transparent={true}>
         <View style={styles.modal}>
-          <Text style={styles.modalTitle}>모든 알림을 삭제하시겠습니까?</Text>
-          <TouchableOpacity style={styles.modalButton} onPress={handleClearNotifications}>
-            <Text style={styles.modalButtonText}>삭제</Text>
-          </TouchableOpacity>
+          <Text style={styles.modalTitle}>알림 시간 설정</Text>
+          {['3시간 전', '6시간 전', '12시간 전', '1일 전', '3일 전'].map((time, index) => (
+            <TouchableOpacity
+              key={index}
+              style={[
+                styles.radioButton,
+                selectedTime === time && styles.radioButtonSelected,
+              ]}
+              onPress={() => handleTimeSelect(time)}
+            >
+              <Text
+                style={[
+                  styles.radioButtonText,
+                  selectedTime === time && styles.radioButtonTextSelected,
+                ]}
+              >
+                {time}
+              </Text>
+            </TouchableOpacity>
+          ))}
           <TouchableOpacity style={styles.modalButton} onPress={() => setModalVisible(false)}>
-            <Text style={styles.modalButtonText}>취소</Text>
+            <Text style={styles.modalButtonText}>닫기</Text>
           </TouchableOpacity>
         </View>
       </Modal>
@@ -107,12 +109,20 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f7f9fc',
     padding: 16,
-    backgroundColor: '#f9f9f9',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 20,
+  },
+  icon: {
+    width: 24,
+    height: 24,
   },
   notification: {
     padding: 16,
@@ -128,18 +138,6 @@ const styles = StyleSheet.create({
   notificationText: {
     fontSize: 16,
   },
-  clearButton: {
-    marginTop: 20,
-    padding: 12,
-    backgroundColor: '#007BFF',
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  clearButtonText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#fff',
-  },
   modal: {
     flex: 1,
     justifyContent: 'center',
@@ -152,11 +150,30 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     color: '#fff',
   },
+  radioButton: {
+    width: '60%',
+    padding: 12,
+    borderRadius: 8,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  radioButtonSelected: {
+    backgroundColor: '#007BFF',
+  },
+  radioButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#007BFF',
+  },
+  radioButtonTextSelected: {
+    color: '#fff',
+  },
   modalButton: {
     backgroundColor: '#fff',
     padding: 12,
     borderRadius: 8,
-    marginBottom: 10,
+    marginTop: 20,
     width: '60%',
     alignItems: 'center',
   },

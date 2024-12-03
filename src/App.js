@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import React, { useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -25,8 +24,8 @@ Notifications.setNotificationHandler({
 });
 
 function TabNavigator({ route }) {
-  const { courses } = route.params || {}; // 강좌 데이터를 전달받음
-  const iconSize = { width: 70, height: 30, borderRadius: 100 }; // 아이콘 크기 설정
+  const { courses } = route.params || {};
+  const iconSize = { width: 70, height: 30, borderRadius: 100 };
 
   return (
     <Tab.Navigator
@@ -48,12 +47,8 @@ function TabNavigator({ route }) {
           }
           return <Image source={icon} style={{ ...iconSize }} />;
         },
-        tabBarLabelStyle: {
-          fontSize: 12,
-        },
-        tabBarStyle: {
-          height: 65, // 하단 네비게이션 바 높이 조정
-        },
+        tabBarLabelStyle: { fontSize: 12 },
+        tabBarStyle: { height: 65 },
       })}
       initialRouteName="Home"
     >
@@ -62,16 +57,14 @@ function TabNavigator({ route }) {
         component={HomeScreen}
         initialParams={{ courses }}
         options={{
-          title: 'Schedule', // 제목 설정
-          headerStyle: {
-            height: 100, // 상단 바 높이 증가
-          },
-          headerTitleAlign: 'center', // 제목 중앙 정렬
+          title: 'Schedule',
+          headerStyle: { height: 100 },
+          headerTitleAlign: 'center',
           headerTitleStyle: {
-            fontSize: 30, // 제목 글씨 크기
-            fontWeight: 'bold', // 글씨 두께
-            color: '#333', // 글씨 색상
-            lineHeight: 40, // 텍스트 높이 조정
+            fontSize: 30,
+            fontWeight: 'bold',
+            color: '#333',
+            lineHeight: 40,
           },
         }}
       />
@@ -80,15 +73,13 @@ function TabNavigator({ route }) {
         component={NotificationScreen}
         options={{
           title: 'Alarm',
-          headerStyle: {
-            height: 100, // 상단 바 높이 증가
-          },
-          headerTitleAlign: 'center', // 제목 중앙 정렬
+          headerStyle: { height: 100 },
+          headerTitleAlign: 'center',
           headerTitleStyle: {
-            fontSize: 30, // 제목 글씨 크기
-            fontWeight: 'bold', // 글씨 두께
-            color: '#333', // 글씨 색상
-            lineHeight: 40, // 텍스트 높이 조정
+            fontSize: 30,
+            fontWeight: 'bold',
+            color: '#333',
+            lineHeight: 40,
           },
         }}
       />
@@ -97,15 +88,13 @@ function TabNavigator({ route }) {
         component={ProfileScreen}
         options={{
           title: 'Profile',
-          headerStyle: {
-            height: 100, // 상단 바 높이 증가
-          },
-          headerTitleAlign: 'center', // 제목 중앙 정렬
+          headerStyle: { height: 100 },
+          headerTitleAlign: 'center',
           headerTitleStyle: {
-            fontSize: 30, // 제목 글씨 크기
-            fontWeight: 'bold', // 글씨 두께
-            color: '#333', // 글씨 색상
-            lineHeight: 40, // 텍스트 높이 조정
+            fontSize: 30,
+            fontWeight: 'bold',
+            color: '#333',
+            lineHeight: 40,
           },
         }}
       />
@@ -116,30 +105,26 @@ function TabNavigator({ route }) {
 export default function App() {
   useEffect(() => {
     const registerPushNotifications = async () => {
-      // 권한 요청 및 Expo Push Token 가져오기
       const token = await registerForPushNotificationsAsync();
       if (token) {
         console.log('Expo Push Token:', token);
       }
     };
 
-    const setupNotificationListeners = () => {
-      // 알림 수신 리스너
-      Notifications.addNotificationReceivedListener((notification) => {
-        Alert.alert('푸시 알림', notification.request.content.body);
-      });
+    const notificationListener = Notifications.addNotificationReceivedListener((notification) => {
+      Alert.alert('푸시 알림', notification.request.content.body);
+    });
 
-      // 알림 클릭 리스너
-      Notifications.addNotificationResponseReceivedListener((response) => {
-        console.log('알림 클릭:', response);
-      });
-    };
+    const responseListener = Notifications.addNotificationResponseReceivedListener((response) => {
+      console.log('알림 클릭:', response);
+    });
 
     registerPushNotifications();
-    setupNotificationListeners();
 
+    // 리스너 해제
     return () => {
-      Notifications.removeAllNotificationListeners();
+      notificationListener.remove();
+      responseListener.remove();
     };
   }, []);
 
@@ -151,25 +136,11 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Splash">
         <Stack.Screen name="Splash" options={{ headerShown: false }}>
-          {(props) => (
-            <SplashScreen {...props} onLoaded={() => setLoaded(true)} />
-          )}
+          {(props) => <SplashScreen {...props} onLoaded={() => setLoaded(true)} />}
         </Stack.Screen>
-        <Stack.Screen
-          name="Login"
-          component={LoginScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="Manual"
-          component={ManualScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="Main"
-          component={TabNavigator}
-          options={{ headerShown: false }}
-        />
+        <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="Manual" component={ManualScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="Main" component={TabNavigator} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

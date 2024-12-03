@@ -1,7 +1,21 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, SafeAreaView, ScrollView } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  SafeAreaView,
+  ScrollView,
+} from 'react-native';
+import { dummyData } from './dummyData';
 
 const ProfileScreen = ({ navigation }) => {
+  // 더미데이터에서 사용자 정보 추출
+  const userData = dummyData.find((item) =>
+    item.some((data) => data.student_num)
+  )[0];
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -10,17 +24,17 @@ const ProfileScreen = ({ navigation }) => {
           <View style={styles.infoRow}>
             <Image source={require('../assets/user-icon.png')} style={styles.icon} />
             <Text style={styles.infoLabel}>이름</Text>
-            <Text style={styles.infoText}>홍길동</Text>
+            <Text style={styles.infoText}>{userData.user_name}</Text>
           </View>
           <View style={styles.infoRow}>
             <Image source={require('../assets/id-icon.png')} style={styles.icon} />
             <Text style={styles.infoLabel}>학번</Text>
-            <Text style={styles.infoText}>2412345</Text>
+            <Text style={styles.infoText}>{userData.student_num}</Text>
           </View>
           <View style={styles.infoRow}>
             <Image source={require('../assets/school-icon.png')} style={styles.icon} />
             <Text style={styles.infoLabel}>소속</Text>
-            <Text style={styles.infoText}>모바일소프트웨어트랙</Text>
+            <Text style={styles.infoText}>{userData.trak_name}</Text>
           </View>
         </View>
         <TouchableOpacity style={styles.logoutButton} onPress={() => navigation.navigate('Login')}>

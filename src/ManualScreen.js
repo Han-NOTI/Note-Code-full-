@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, Button, StyleSheet, Image } from 'react-native';
+import { schedulePushNotification } from './pushNotifications';
 
 const ManualScreen = ({ navigation }) => {
   const [currentPage, setCurrentPage] = useState(0);
@@ -27,22 +28,24 @@ const ManualScreen = ({ navigation }) => {
     },
   ];
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (currentPage < pages.length - 1) {
       setCurrentPage(currentPage + 1);
     } else {
-      navigation.replace('Main'); // 마지막 페이지에서 메인 화면으로 이동
+      // 메뉴얼 완료 시 푸시 알림 예약
+      await schedulePushNotification('알림 센터에 새로운 알림이 있습니다.', { seconds: 1 });
+
+      // 홈 화면으로 이동
+      navigation.replace('Main');
     }
   };
 
-  const handlePrev = () => {
-    if (currentPage > 0) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
+  const handleSkip = async () => {
+    // 메뉴얼 건너뛰기 시 푸시 알림 예약
+    await schedulePushNotification('알림 센터에 새로운 알림이 있습니다.', { seconds: 1 });
 
-  const handleSkip = () => {
-    navigation.replace('Main'); // Skip 버튼을 누르면 바로 메인 화면으로 이동
+    // 홈 화면으로 이동
+    navigation.replace('Main');
   };
 
   return (
@@ -57,7 +60,7 @@ const ManualScreen = ({ navigation }) => {
         {currentPage === 0 ? (
           <Button title="Skip" onPress={handleSkip} color="#000000" />
         ) : (
-          <Button title="← Prev" onPress={handlePrev} color="#000000" />
+          <Button title="← Prev" onPress={() => setCurrentPage(currentPage - 1)} color="#000000" />
         )}
         <Image source={require('../assets/icon.png')} style={styles.icon} />
         <Button

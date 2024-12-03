@@ -11,18 +11,18 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/bell.png",
+        "foregroundImage": "./assets/han-noti.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.dda2730.finalproject",
-      "icon": "./assets/bell.png", 
+      "icon": "./assets/han-noti.png", 
       "notification": {
-        "icon": "./assets/bell.png",
+        "icon": "./assets/han-noti.png",
         "color": "#FF5733" // 알림 아이콘의 배경색 (선택 사항)
       }
     },
     "splash": {
-      "image": "./assets/bell.png",
+      "image": "./assets/han-noti.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
